@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ADHWA CAKE - Official Store</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #fdf8f2; /* Warm Warm/Cream Bakery Background */
+            --text-main: #3d2514;
+            --text-muted: #8c684d;
+            --accent-color: #b85c14; /* Warm Cookie Brown / Amber */
+            --accent-dark: #6e350a;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --transition-speed: 0.5s;
+            --transition-cubic: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Header / Logo Section */
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 20px 8px 20px;
+            width: 100%;
+            z-index: 10;
+            position: relative;
+        }
+
+        .brand-logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .brand-sub-svg {
+            margin-bottom: 2px;
+        }
+
+        .brand-title-img {
+            width: 220px;
+            max-width: 80vw;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+        }
+
+        /* Main Showcase Area */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 10px 0 30px 0;
+            width: 100%;
+        }
+
+        /* Watermark Background Text */
+        .bg-watermark {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16vw;
+            font-weight: 900;
+            color: rgba(184, 92, 20, 0.06);
+            letter-spacing: -2px;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 1;
+            text-transform: uppercase;
+            transition: all var(--transition-speed) var(--transition-cubic);
+        }
+
+        /* 3D Stack Carousel Container */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            height: 350px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .card {
+            position: absolute;
+            width: 260px;
+            height: 300px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform var(--transition-speed) var(--transition-cubic),
+                        opacity var(--transition-speed) var(--transition-cubic);
+            cursor: pointer;
+        }
+
+        .card img {
+            width: 90%;
+            height: auto;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 15px 25px rgba(110, 53, 10, 0.2));
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        /* Card Positioning Classes for Stack Effect */
+        .card[data-pos="0"] {
+            transform: translateX(0) scale(1.1) rotate(0deg);
+            z-index: 5;
+            opacity: 1;
+        }
+
+        .card[data-pos="1"] {
+            transform: translateX(120px) scale(0.8) rotate(5deg);
+            z-index: 4;
+            opacity: 0.7;
+        }
+
+        .card[data-pos="-1"] {
+            transform: translateX(-120px) scale(0.8) rotate(-5deg);
+            z-index: 4;
+            opacity: 0.7;
+        }
+
+        .card[data-pos="2"], .card[data-pos="-2"], .card[data-pos="3"], .card[data-pos="-3"], .card[data-hidden="true"] {
+            transform: translateX(0) scale(0.4);
+            z-index: 1;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Detail Panel for Active Item */
+        .item-info {
+            text-align: center;
+            margin-top: 5px;
+            z-index: 3;
+            width: 100%;
+            padding: 0 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .item-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            color: var(--accent-dark);
+        }
+
+        /* Weight Selector Tabs */
+        .variant-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .variant-btn {
+            background: #f3e6d8;
+            border: 1px solid #e2cbba;
+            color: var(--text-main);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .variant-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+        }
+
+        .item-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-dark);
+            margin-bottom: 16px;
+        }
+
+        /* Action Area Below Price */
+        .action-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        /* Tombol Tambah ke Keranjang */
+        .add-to-cart-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            box-shadow: 0 10px 20px rgba(184, 92, 20, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .add-to-cart-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Tombol Ikon Tas Keranjang di Bawah */
+        .view-cart-btn {
+            background: rgba(184, 92, 20, 0.08);
+            border: 1px solid rgba(184, 92, 20, 0.2);
+            color: var(--accent-dark);
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .view-cart-btn i {
+            font-size: 16px;
+            color: var(--accent-dark);
+        }
+
+        .view-cart-btn:active {
+            background: rgba(184, 92, 20, 0.15);
+        }
+
+        .cart-count-badge {
+            background-color: var(--accent-dark);
+            color: white;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        /* Payment QR Section */
+        .payment-section {
+            width: 100%;
+            max-width: 320px;
+            margin: 30px auto 10px auto;
+            background: #ffffff;
+            border: 1px solid #e8d7c8;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(110, 53, 10, 0.05);
+        }
+
+        .payment-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-dark);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .qr-code-img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            margin: 0 auto 8px auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .payment-instruction {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Footer Section */
+        footer {
+            text-align: center;
+            padding: 20px 16px;
+            background: #f4eae1;
+            border-top: 1px solid #ebd9cb;
+            margin-top: 30px;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Cart Drawer Slide Overlay */
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cart-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            background: #ffffff;
+            z-index: 999;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .cart-drawer.active {
+            transform: translateX(0);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-cart-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .cart-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 40px 0;
+            color: #888;
+        }
+
+        .cart-empty i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            color: var(--accent-color);
+            opacity: 0.4;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .cart-item-img {
+            width: 65px;
+            height: 65px;
+            background: #fdf8f2;
+            border-radius: 12px;
+            object-fit: contain;
+            padding: 4px;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+            color: var(--text-main);
+        }
+
+        .cart-item-variant {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .cart-item-price {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-dark);
+        }
+
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .qty-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .qty-val {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .remove-item-btn {
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        .cart-summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .cart-summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--accent-dark);
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed #ddd;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .checkout-btn:active {
+            opacity: 0.9;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--accent-dark);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (min-width: 769px) {
+            header { padding: 24px 48px; }
+            .carousel-container { height: 400px; }
+            .card { width: 310px; height: 350px; }
+            .card[data-pos="1"] { transform: translateX(190px) scale(0.85) rotate(6deg); }
+            .card[data-pos="-1"] { transform: translateX(-190px) scale(0.85) rotate(-6deg); }
+            .card[data-pos="2"] { transform: translateX(320px) scale(0.7) rotate(12deg); opacity: 0.4; }
+            .card[data-pos="-2"] { transform: translateX(-320px) scale(0.7) rotate(-12deg); opacity: 0.4; }
+            .bg-watermark { font-size: 14vw; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="brand-logo-container">
+            <svg class="brand-sub-svg" width="160" height="20" viewBox="0 0 160 20">
+                <path id="curve" d="M 5,18 Q 80,-2 155,18" fill="transparent"/>
+                <text font-size="9" font-weight="700" fill="#6e350a" letter-spacing="4">
+                    <textPath href="#curve" startOffset="50%" text-anchor="middle">CAKE & COOKIES</textPath>
+                </text>
+            </svg>
+            <img src="title.png" alt="ADHWA CAKE" class="brand-title-img">
+        </div>
+    </header>
+
+    <!-- Main Content Showcase -->
+    <main>
+        <!-- Dynamic Watermark Text -->
+        <div class="bg-watermark" id="bgWatermark">COOKIES</div>
+
+        <!-- 3D Stacked Cards Carousel -->
+        <div class="carousel-container" id="carousel">
+            <!-- Cards populated by JS -->
+        </div>
+
+        <!-- Active Product Details -->
+        <div class="item-info">
+            <h2 class="item-title" id="itemTitle">Kue Coklat Trimit</h2>
+            
+            <!-- Size Options -->
+            <div class="variant-selector">
+                <button class="variant-btn active" onclick="selectVariant('250g')">250 Gram</button>
+                <button class="variant-btn" onclick="selectVariant('500g')">500 Gram</button>
+            </div>
+
+            <div class="item-price" id="itemPrice">Rp 18.000</div>
+            
+            <div class="action-group">
+                <!-- Tombol Beli -->
+                <button class="add-to-cart-btn" id="addToCartBtn">
+                    <i class="fa-solid fa-cart-plus"></i> Tambah ke Keranjang
+                </button>
+
+                <!-- Tombol Ikon Tas Keranjang di Bawah -->
+                <button class="view-cart-btn" id="openCartBtn">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <span>Keranjang Belanja</span>
+                    <span class="cart-count-badge" id="cartBadge">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- QR Code Pembayaran Section -->
+        <div class="payment-section">
+            <div class="payment-title"><i class="fa-solid fa-qrcode"></i> QR Code Pembayaran</div>
+            <!-- Ganti src="qris.png" dengan nama file QR code pembayaran Anda -->
+            <img src="qris.png" alt="QR Code Pembayaran" class="qr-code-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'150\'><rect width=\'150\' height=\'150\' fill=\'%23f4eae1\'/><text x=\'50%\' y=\'50%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'12\' fill=\'%238c684d\'>QR Code (qris.png)</text></svg>'">
+            <div class="payment-instruction">
+                Scan QR code di atas untuk melakukan pembayaran, lalu lampirkan bukti transfer/pembayaran melalui WhatsApp saat melakukan pemesanan.
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-text">
+            Terima kasih banyak kepada pelanggan atas kepercayaan dan orderannya. Diharapkan memesan kembali di <strong>Adhwa Cake & Cookies</strong>!
+        </div>
+    </footer>
+
+    <!-- Cart Overlay & Drawer -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h3><i class="fa-solid fa-basket-shopping"></i> Keranjang Belanja</h3>
+            <button class="close-cart-btn" id="closeCartBtn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="cart-body" id="cartBody">
+            <!-- Dynamic Cart Items -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-summary-row">
+                <span>Total Item:</span>
+                <span id="totalItemsCount" style="font-weight:700; color:#111;">0 Pcs</span>
+            </div>
+            <div class="cart-summary-total">
+                <span>Total Harga:</span>
+                <span id="totalPriceVal">Rp 0</span>
+            </div>
+            <button class="checkout-btn" onclick="checkoutWhatsApp()">
+                <i class="fa-brands fa-whatsapp"></i> Checkout via WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notification Popup -->
+    <div class="toast" id="toast">Berhasil dimasukkan ke keranjang!</div>
+
+    <script>
+        /* =======================================================
+           KONFIGURASI PRODUK & HARGA (MUDAH DIREVISI)
+           Anda dapat mengubah harga, nama, atau gambar di bawah ini.
+        ========================================================== */
+        const products = [
+            {
+                id: 1,
+                name: "Kue Coklat Trimit",
+                watermark: "TRIMIT",
+                prices: {
+                    "250g": 18000,
+                    "500g": 32000
+                },
+                image: "kue-1.png"
+            },
+            {
+                id: 2,
+                name: "Kue Kacang",
+                watermark: "KACANG",
+                prices: {
+                    "250g": 18000,
+                    "500g": 32000
+                },
+                image: "kue-2.png"
+            },
+            {
+                id: 3,
+                name: "Kue Kastangel",
+                watermark: "KASTANGEL",
+                prices: {
+                    "250g": 18000,
+                    "500g": 32000
+                },
+                image: "kue-3.png"
+            },
+            {
+                id: 4,
+                name: "Kue Marina",
+                watermark: "MARINA",
+                prices: {
+                    "250g": 18000,
+                    "500g": 32000
+                },
+                image: "kue-4.png"
+            },
+            {
+                id: 5,
+                name: "Kue Nastar",
+                watermark: "NASTAR",
+                prices: {
+                    "250g": 18000,
+                    "500g": 32000
+                },
+                image: "kue-5.png"
+            },
+            {
+                id: 6,
+                name: "Kue Mawar",
+                watermark: "MAWAR",
+                prices: {
+                    "250g": 18000,
+                    "500g": 32000
+                },
+                image: "kue-6.png"
+            }
+        ];
+
+        // Nomor WhatsApp Toko (Sesuaikan nomor WA Anda di sini)
+        const whatsappNumber = "6285233659810";
+
+        let currentIndex = 0;
+        let selectedWeight = "250g"; // Default ukuran
+        let cart = [];
+        const total = products.length;
+
+        const carousel = document.getElementById('carousel');
+        const bgWatermark = document.getElementById('bgWatermark');
+        const itemTitle = document.getElementById('itemTitle');
+        const itemPrice = document.getElementById('itemPrice');
+        const addToCartBtn = document.getElementById('addToCartBtn');
+        const cartBadge = document.getElementById('cartBadge');
+        const toast = document.getElementById('toast');
+
+        const openCartBtn = document.getElementById('openCartBtn');
+        const closeCartBtn = document.getElementById('closeCartBtn');
+        const cartOverlay = document.getElementById('cartOverlay');
+        const cartDrawer = document.getElementById('cartDrawer');
+        const cartBody = document.getElementById('cartBody');
+        const totalItemsCount = document.getElementById('totalItemsCount');
+        const totalPriceVal = document.getElementById('totalPriceVal');
+
+        function init() {
+            carousel.innerHTML = '';
+
+            products.forEach((prod, idx) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = idx;
+
+                const img = document.createElement('img');
+                img.src = prod.image;
+                img.alt = prod.name;
+                img.onerror = function() {
+                    this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 24 24" fill="none" stroke="%23b85c14" stroke-width="1"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>';
+                };
+
+                card.appendChild(img);
+                card.addEventListener('click', () => {
+                    if (idx !== currentIndex) {
+                        currentIndex = idx;
+                        updateCarousel();
+                    }
+                });
+                carousel.appendChild(card);
+            });
+
+            updateCarousel();
+            renderCart();
+        }
+
+        function selectVariant(weight) {
+            selectedWeight = weight;
+            document.querySelectorAll('.variant-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.includes(weight === '250g' ? '250' : '500'));
+            });
+            updatePriceDisplay();
+        }
+
+        function updatePriceDisplay() {
+            const activeProd = products[currentIndex];
+            const currentPrice = activeProd.prices[selectedWeight];
+            itemPrice.innerText = `Rp ${currentPrice.toLocaleString('id-ID')} (${selectedWeight === '250g' ? '250 Gram' : '500 Gram'})`;
+        }
+
+        function getOffset(index, current, count) {
+            let diff = index - current;
+            if (diff > count / 2) diff -= count;
+            if (diff < -count / 2) diff += count;
+            return diff;
+        }
+
+        function updateCarousel() {
+            const cards = document.querySelectorAll('.card');
+
+            cards.forEach((card, idx) => {
+                const offset = getOffset(idx, currentIndex, total);
+                card.setAttribute('data-pos', offset);
+
+                if (Math.abs(offset) > 1) {
+                    card.setAttribute('data-hidden', 'true');
+                } else {
+                    card.removeAttribute('data-hidden');
+                }
+            });
+
+            const activeProd = products[currentIndex];
+            bgWatermark.innerText = activeProd.watermark;
+            itemTitle.innerText = activeProd.name;
+            updatePriceDisplay();
+        }
+
+        // Add item to cart
+        addToCartBtn.addEventListener('click', () => {
+            const activeProd = products[currentIndex];
+            const price = activeProd.prices[selectedWeight];
+            const cartItemId = `${activeProd.id}-${selectedWeight}`;
+
+            const existingIndex = cart.findIndex(item => item.cartItemId === cartItemId);
+
+            if (existingIndex > -1) {
+                cart[existingIndex].qty += 1;
+            } else {
+                cart.push({
+                    cartItemId: cartItemId,
+                    id: activeProd.id,
+                    name: activeProd.name,
+                    weight: selectedWeight === '250g' ? '250 Gram' : '500 Gram',
+                    price: price,
+                    image: activeProd.image,
+                    qty: 1
+                });
+            }
+
+            renderCart();
+
+            toast.innerText = `"${activeProd.name} (${selectedWeight})" masuk keranjang!`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        });
+
+        // Render Cart Drawer
+        function renderCart() {
+            let totalQty = 0;
+            let totalPrice = 0;
+
+            if (cart.length === 0) {
+                cartBody.innerHTML = `
+                    <div class="cart-empty">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        <p>Keranjang belanjaan masih kosong</p>
+                    </div>
+                `;
+            } else {
+                cartBody.innerHTML = ``;
+                cart.forEach((item, index) => {
+                    totalQty += item.qty;
+                    totalPrice += item.price * item.qty;
+
+                    const cartItemEl = document.createElement('div');
+                    cartItemEl.className = 'cart-item';
+                    cartItemEl.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="cart-item-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'50\'><rect width=\'50\' height=\'50\' fill=\'%23eee\'/></svg>'">
+                        <div class="cart-item-details">
+                            <div class="cart-item-title">${item.name}</div>
+                            <div class="cart-item-variant">Ukuran: ${item.weight}</div>
+                            <div class="cart-item-price">Rp ${(item.price * item.qty).toLocaleString('id-ID')}</div>
+                            <div class="cart-item-qty">
+                                <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+                                <span class="qty-val">${item.qty}</span>
+                                <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                            </div>
+                        </div>
+                        <button class="remove-item-btn" onclick="removeItem(${index})"><i class="fa-solid fa-trash-can"></i></button>
+                    `;
+                    cartBody.appendChild(cartItemEl);
+                });
+            }
+
+            cartBadge.innerText = totalQty;
+            totalItemsCount.innerText = `${totalQty} Pcs`;
+            totalPriceVal.innerText = `Rp ${totalPrice.toLocaleString('id-ID')}`;
+        }
+
+        window.updateQty = function(index, change) {
+            cart[index].qty += change;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            renderCart();
+        };
+
+        window.removeItem = function(index) {
+            cart.splice(index, 1);
+            renderCart();
+        };
+
+        // Checkout function to WhatsApp
+        function checkoutWhatsApp() {
+            if(cart.length === 0) {
+                alert("Keranjang belanja Anda masih kosong!");
+                return;
+            }
+
+            let text = "Halo *ADHWA CAKE*, saya ingin memesan kue kering:\n\n";
+            let grandTotal = 0;
+
+            cart.forEach((item, i) => {
+                const subtotal = item.price * item.qty;
+                grandTotal += subtotal;
+                text += `${i + 1}. *${item.name}* (${item.weight})\n   Qty: ${item.qty} x Rp ${item.price.toLocaleString('id-ID')} = Rp ${subtotal.toLocaleString('id-ID')}\n`;
+            });
+
+            text += `\n*Total Pembayaran: Rp ${grandTotal.toLocaleString('id-ID')}*\n\n*(Lampirkan bukti pembayaran/transfer di sini sebelum pesanan diproses)*\n\nMohon diproses pesanannya. Terima kasih!`;
+
+            const encodedUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
+            window.open(encodedUrl, '_blank');
+        }
+
+        // Toggle Drawer
+        openCartBtn.addEventListener('click', () => {
+            cartOverlay.classList.add('active');
+            cartDrawer.classList.add('active');
+        });
+
+        function closeCart() {
+            cartOverlay.classList.remove('active');
+            cartDrawer.classList.remove('active');
+        }
+
+        closeCartBtn.addEventListener('click', closeCart);
+        cartOverlay.addEventListener('click', closeCart);
+
+        // Touch & Swipe Support for Carousel
+        let startX = 0;
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        }, { passive: true });
+
+        carousel.addEventListener('touchend', (e) => {
+            const endX = e.changedTouches[0].clientX;
+            const diff = startX - endX;
+            if (Math.abs(diff) > 40) {
+                if (diff > 0) {
+                    currentIndex = (currentIndex + 1) % total;
+                } else {
+                    currentIndex = (currentIndex - 1 + total) % total;
+                }
+                updateCarousel();
+            }
+        }, { passive: true });
+
+        init();
+    </script>
+</body>
+</html>
